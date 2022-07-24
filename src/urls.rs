@@ -12,15 +12,19 @@ pub fn parse_url(url: &str) -> (&str, &str) {
 pub fn get_host_and_path(url: &str) -> (&str, String) {
     let mut url_parts: Vec<&str> = url.split("/").collect();
     let host = url_parts.remove(0);
-    let path = url_parts.join("/");
+    let path = if url_parts.is_empty() {
+        String::from("/")
+    } else { 
+        url_parts.join("/") 
+    };
 
     (host, path)
 }
 
 /// If there's a port specified along with the hostname
 /// (i.e. localhost:3000), pull them apart
-fn get_port(host: &str) -> (&str, &str) {
-    todo!();
+pub fn get_port(_host: &str) -> u16 {
+    80
 }
 
 #[test]
