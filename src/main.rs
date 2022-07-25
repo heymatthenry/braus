@@ -15,12 +15,13 @@ fn main() {
 
     let (host, path) = urls::get_host_and_path(url);
 
+    let path = &path[..];
     let port = urls::get_port(host);
     let resp = request(host, path, port);
     print!("{}", resp.unwrap());
 }
 
-fn request(host: &str, path: String, port: u16) 
+fn request(host: &str, path: &str, port: u16) 
                 -> std::io::Result<String> 
 {
     let mut socket = net::TcpStream::connect((host, port))?;
