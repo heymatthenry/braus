@@ -1,5 +1,5 @@
 use std::io::prelude::*;
-use std::net;
+use std::{str, net};
 use clap::{Arg, App};
 
 mod urls;
@@ -18,7 +18,7 @@ fn main() {
     let path = &path[..];
     let port = urls::get_port(host);
     let resp = request(host, path, port);
-    print!("{}", resp.unwrap());
+    show(resp.unwrap());
 }
 
 fn request(host: &str, path: &str, port: u16) 
@@ -36,3 +36,20 @@ fn request(host: &str, path: &str, port: u16)
     Ok(response)
 }
 
+fn show(body: String) {
+    let mut in_bracket: bool = false;
+    let bytes = body.as_bytes();
+    let mut clean_text: Vec<u8> = vec![];
+
+    for (_i, &item) in bytes.iter().enumerate() {
+        if item == b'<' {
+            in_bracket = true;
+        } else if item == b'>' {
+            in_bracket = false;
+        } else if !in_bracket {
+            clean_text.push(item);
+        }
+    }
+
+    print!("{}", str::from_utf8(&clean_text).unwrap());
+}
