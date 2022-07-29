@@ -37,7 +37,10 @@ fn request(host: &str, path: &str, port: u16)
 }
 
 fn show(body: String) {
+
     let mut in_bracket: bool = false;
+    let mut in_body: bool = false;
+    let mut current_tag: Vec<u8> = vec![];
     let bytes = body.as_bytes();
     let mut clean_text: Vec<u8> = vec![];
 
@@ -46,7 +49,18 @@ fn show(body: String) {
             in_bracket = true;
         } else if item == b'>' {
             in_bracket = false;
-        } else if !in_bracket {
+            let current_tag_name = str::from_utf8(&current_tag).unwrap();
+
+            if current_tag_name.eq("body") {
+               in_body = true; 
+            } else if current_tag_name.eq("/body") {
+               in_body = false; 
+            }
+
+            current_tag = vec![];
+        } else if in_bracket {
+            current_tag.push(item);
+        } else if !in_bracket && in_body {
             clean_text.push(item);
         }
     }
