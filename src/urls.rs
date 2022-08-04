@@ -1,3 +1,7 @@
+use std::fs::File;
+use std::io::BufReader;
+use std::io::prelude::*;
+
 pub fn parse_url(url: &str) -> (&str, &str) {
     let schemes = ["http", "https", "file", "data"];
     let url_parts: Vec<&str> = url.split("://").collect();
@@ -19,6 +23,15 @@ pub fn get_host_and_path(url: &str) -> (&str, String) {
     };
 
     (host, path)
+}
+
+pub fn read_file(path: &str) -> std::io::Result<String> {
+    let path = String::from("/") + path;
+    let file = File::open(path)?;
+    let mut reader = BufReader::new(file);
+    let mut contents = String::new();
+    reader.read_to_string(&mut contents)?;
+    Ok(contents)
 }
 
 /// If there's a port specified along with the hostname
