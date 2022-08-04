@@ -11,13 +11,18 @@ fn main() {
                         .get_matches();
 
     let url = matches.value_of("url").unwrap();
-    let (_scheme, url) = urls::parse_url(url);
-
+    let (scheme, url) = urls::parse_url(url);
     let (host, path) = urls::get_host_and_path(url);
-
     let path = &path[..];
-    let port = urls::get_port(host);
-    let resp = request(host, path, port);
+    let resp;
+
+    if scheme == "file" {
+        resp = urls::read_file(path);
+    } else {
+        let port = urls::get_port(host);
+        resp = request(host, path, port);
+    }
+
     show(resp.unwrap());
 }
 
